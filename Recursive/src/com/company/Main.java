@@ -1,0 +1,21 @@
+package com.company;
+
+public class Main {
+
+    public static void main(String[] args) {
+        // write your code here
+        Recursive recurs = new Recursive();
+        int n = 19;
+        System.out.println("Factorial of " + n + " = " + recurs.factorial(n));
+        System.out.println("The Fibonacci number "  + n + " is " + recurs.fibnoacci(n));
+        int b = 10;
+        int e = 5;
+        System.out.println("Power of " + b + " in the " + e + " = " + recurs.power(b,e));
+        int a = 17;
+        int b2 = 170;
+        System.out.println("The greatest common denominator of " + a + " and " + b2 + " is " + recurs.gcd(a, b2));
+        int nominator = 8;
+        int denominator = 12;
+        System.out.println("The simplified fraction of "+ nominator+"/"+denominator+ " is " + recurs.simplify(nominator, denominator));
+    }
+}
