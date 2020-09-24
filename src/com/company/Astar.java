@@ -84,15 +84,15 @@ public class Astar {
         return h;
     }
 
-    public void checkNextStep(CoordinateAStar coordinate, CoordinateAStar goalCoordinate, Maze maze, PriorityQueue<CoordinateAStar> pq, PriorityQueue<CoordinateAStar> runningQueue){
+    public void checkNextStep(CoordinateAStar coordinate, CoordinateAStar goalCoordinate, Maze maze, PriorityQueue<CoordinateAStar> allCoordinatesQueue, PriorityQueue<CoordinateAStar> runningQueue){
         //check up
-        checkCoordinate(coordinate, goalCoordinate, pq, runningQueue, maze, 0,-1);
+        checkCoordinate(coordinate, goalCoordinate, allCoordinatesQueue, runningQueue, maze, 0,-1);
         // check down
-        checkCoordinate(coordinate, goalCoordinate, pq, runningQueue, maze, 0,1);
+        checkCoordinate(coordinate, goalCoordinate, allCoordinatesQueue, runningQueue, maze, 0,1);
         // check right
-        checkCoordinate(coordinate, goalCoordinate, pq, runningQueue, maze, 1,0);
+        checkCoordinate(coordinate, goalCoordinate, allCoordinatesQueue, runningQueue, maze, 1,0);
         // check left
-        checkCoordinate(coordinate, goalCoordinate, pq, runningQueue, maze, -1,0);
+        checkCoordinate(coordinate, goalCoordinate, allCoordinatesQueue, runningQueue, maze, -1,0);
     }
 
     public void checkCoordinate(CoordinateAStar coordinate, CoordinateAStar goalCoordinate, PriorityQueue<CoordinateAStar> allCoordinatesQueue, PriorityQueue<CoordinateAStar> runningQueue, Maze maze, int x, int y){
@@ -106,7 +106,9 @@ public class Astar {
                 //For det undersøgte koordinat, inkrementer walkcost G
                 tmpCoordinate.walkCost = coordinate.walkCost + 1;
                 //og opdater totalcost F = G + H
-                tmpCoordinate.totalCost = tmpCoordinate.walkCost + heuristic(tmpCoordinate, goalCoordinate);
+                int H = heuristic(tmpCoordinate, goalCoordinate);
+                tmpCoordinate.totalCost = tmpCoordinate.walkCost + H;
+                tmpCoordinate.heuristic = + H;
                 //hvis F værdien af det undersøgte koordinat ikke er den samme som F værdien af det koordinat vi står på skal det i allCoordinatesQueue
                 //ellers skal det i runningQueue så det kan blive undersøgt sammen med sine ligesindede.
                 if (tmpCoordinate.totalCost != coordinate.totalCost){
@@ -123,10 +125,11 @@ public class Astar {
             @Override
             public int compare(CoordinateAStar coordinate1, CoordinateAStar coordinate2) {
                 //runningQueue sorteres således at det felt der har den mindste distance til goal coordinate poller først, dvs.
-                int distance1=heuristic(coordinate1, goalCoordinate);
-                int distance2=heuristic(coordinate2, goalCoordinate);
+                //int distance1=heuristic(coordinate1, goalCoordinate);
+                //int distance2=heuristic(coordinate2, goalCoordinate);
                 //den med mindst distance til goal coordinate poller først
-                return (distance1-distance2);
+                //return (distance1-distance2);
+                return (coordinate1.heuristic - coordinate2.heuristic);
                 //return (coordinate1.totalCost-coordinate2.totalCost);
                 //return (coordinate1.walkCost - coordinate2.walkCost);
             }
