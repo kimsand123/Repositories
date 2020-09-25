@@ -42,6 +42,14 @@ public class Board {
         return true;
     }
 
+    public int getValue(int x, int y){
+        return board[x][y].getValue();
+    }
+
+    public int getOwner(int x, int y){
+        return board[x][y].getOwner();
+    }
+
     public boolean movePiece ( int fromX, int fromY, int toX, int toY, int player){
         //if the coordinates are out of range OR the player does not owne the Field OR the destination field is not free or if not all three pieces for the player
         //has been put on the board.
@@ -76,5 +84,31 @@ public class Board {
                 }
                 boardString.append("\n");
         }
+    }
+
+    public int calculateBoardValue(Board board, int player){
+        int boardValue = checkForWin(board, player);
+        int horizontalWin = 0;
+        //check Corners
+        for (int y = 0; y<3;y++){
+            for (int x = 0; x<3; x++){
+
+                if (board.getOwner(x,y)==player){
+                    horizontalWin = horizontalWin + 1;
+                    boardValue=boardValue+board.getValue(x,y);
+                }
+                if (horizontalWin==3) {
+                    boardValue = 100;
+                }
+            }
+        }
+        return boardValue;
+    }
+
+    private int checkForWin(Board board, int player){
+
+
+
+        return 100;
     }
 }
