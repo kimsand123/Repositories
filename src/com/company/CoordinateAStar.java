@@ -1,4 +1,4 @@
-package com.company.maze;
+package com.company;
 
 public class CoordinateAStar {
         public int xPos;

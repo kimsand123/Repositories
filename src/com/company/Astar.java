@@ -1,7 +1,7 @@
 package com.company;
 
-import com.company.maze.CoordinateAStar;
 import com.company.maze.Maze;
+import com.company.*;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import static java.lang.Math.abs;
@@ -80,7 +80,7 @@ public class Astar {
     }
 
     public int heuristic (CoordinateAStar coordinate, CoordinateAStar goalCoordinate){
-        int h = abs(coordinate.xPos-goalCoordinate.xPos) + abs(coordinate.yPos- goalCoordinate.yPos);
+        int h = Math.abs(coordinate.xPos-goalCoordinate.xPos) + Math.abs(coordinate.yPos- goalCoordinate.yPos);
         return h;
     }
 

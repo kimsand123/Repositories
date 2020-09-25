@@ -1,5 +1,7 @@
 package com.company.maze;
 
+import com.company.CoordinateAStar;
+
 public class Maze{
     String maze_graphics;
     //String maze_visited;
