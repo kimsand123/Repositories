@@ -9,20 +9,21 @@ public class Node {
     boolean leaf; //leaf = true, node = false
     int boardValue=0;
 
-    public Node(){
-
+    public Node(Board board, int alpha, int beta, boolean leaf, int player){
+        createNode(board, alpha, beta, leaf, player);
     }
+    public void createNode(Board board, int alpha, int beta, boolean leaf, int player){
+        if (!leaf){
+            nodeArray = new Node[9];
+        } else {
+            this.boardValue = board.calculateBoardValue(board, player);
+        }
 
-    public void createNode(int alpha, int beta){
-        nodeArray = new Node[9];
+        this.board = board;
         this.alpha = alpha;
         this.beta = beta;
-    }
+        this.leaf = leaf;
 
-    public void createLeaf(Board board, int player){
-        setLeaf(true);
-        this.board = board;
-        this.boardValue = board.calculateBoardValue(board, player);
     }
 
     public boolean addChild(Node node){
@@ -33,6 +34,10 @@ public class Node {
             nodeArray[next]= node;
         }
         return true;
+    }
+
+    public int getAmountOfChildren(){
+        return nodeArray.length;
     }
 
     public Node getChild(int childNumber){
@@ -75,10 +80,6 @@ public class Node {
 
     public void setBeta(int beta) {
         this.beta = beta;
-    }
-
-    public void addNode(Board board){
-
     }
 
 }

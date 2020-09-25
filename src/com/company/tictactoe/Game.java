@@ -60,26 +60,15 @@ public class Game {
     }
 
     public boolean threeFirstRounds(int x, int y, int player){
-        board.increaseNrOfPlayingPiecesFor(player);
-        return board.setOwner(x,y,player);
+
+        //return board.setOwner(x,y,player);
     }
 
     public void normalRounds(){
 
     }
 
-    public Board boardCreator(Board board, int player){
-        Board hypotheticalBoard = new Board();
-
-
-        return hypotheticalBoard;
-    }
-
-    public int boardEvaluator(Board board){
-        int boardScore=0;
-
-        return boardScore;
-    }
+    //
 
 
 }
