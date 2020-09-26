@@ -1,7 +1,7 @@
 package com.company.tictactoe;
 
 public class Board {
-    Field[] board = new Field[9];
+    Field[] board = new Field[10];
 
     public Board() {
         initBoard(0,  3);
@@ -13,6 +13,7 @@ public class Board {
         initBoard(6,  3);
         initBoard(7,  2);
         initBoard(8,  3);
+        initBoard(9,0);//The static value of the board
     }
 
     private void initBoard(int index, int value) {
@@ -20,6 +21,16 @@ public class Board {
         field.setOwner(0);
         field.setValue(value);
         board[index] = field;
+    }
+
+    public void setStaticValue(int value){
+        Field valueField = new Field();
+        valueField.setValue(value);
+        board[9]=valueField;
+    }
+
+    public int getStaticValue(){
+        return board[9].getValue();
     }
 
     public void setOwner(int index, int player) {

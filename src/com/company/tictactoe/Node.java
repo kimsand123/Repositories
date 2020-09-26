@@ -6,15 +6,17 @@ public class Node {
 
     private int maxDepth;
     private int depth;
-    private List<Node> listOfChildren;
+    private List<Board> listOfChildren;
     private int alpha;
     private int beta;
     private Board board;
     private boolean leaf; //leaf = true, node = false
     private boolean maxiMini; //1=maximizer, 0=minimizer
     private int boardValue=0;
+    private int numberOfPiecesForPlayer=0;
+    private int player = 0;
 
-    public Node(List<Board> childList, int alpha, int beta, boolean leaf, boolean maxiMini, int maxDepth, int depth){
+    public Node(List<Board> childList, int alpha, int beta, boolean leaf, boolean maxiMini, int player, int maxDepth, int depth){
         this.board = board;
         this.alpha = alpha;
         this.beta = beta;
@@ -22,31 +24,65 @@ public class Node {
         this.maxiMini = maxiMini;
         this.maxDepth = maxDepth;
         this.depth = depth;
+        this.player = player;
+
+
     }
 
-    public int alphaBetaExecute(){
-        if (isLeaf()){
+    public Board alphaBetaExecute(Board board, int alpha, int beta, boolean maxiMini, int player, int maxDepth, int depth){
+        this.alpha = alpha;
+        this.beta = beta;
+        this.maxiMini = maxiMini;
+        this.maxDepth = maxDepth;
+        this.depth = depth;
+        this.board = board;
+        this.player = player;
+
+        if(depth>3){
+            numberOfPiecesForPlayer = 3;
+        }
+
+        if (depth == maxDepth){
             return staticValue(board);
         }
-        List<Board> listOfBoards = getBoards(board);
+
+        List<Board> listOfBoards = getBoards(board, player, numberOfPiecesForPlayer);
         if (isMaxiMini()){
-            while (this.alpha<this.beta) {
-                int V =
-                if(V>this.alpha){
-                    this.alpha=V;
+            while (this.alpha<this.beta|| !(listOfBoards.isEmpty())) {
+                Board childBoard = listOfBoards.remove(1);
+                Board V = alphaBetaExecute(childBoard,alpha,beta,!maxiMini,getNewPlayer(player),maxDepth,depth+1);
+                if(V.getStaticValue()>this.alpha){
+                    this.alpha=V.getStaticValue();
+                    this.board = childBoard;
                 }
             }
-            return this.alpha;
-        } else{
+            return this.board;
+        }
 
+        while (this.alpha<this.beta||!(listOfBoards.isEmpty())) {
+            Board childBoard = listOfBoards.remove(1);
+            Board V = alphaBetaExecute(board, alpha, beta, !maxiMini, getNewPlayer(player), maxDepth, depth + 1);
+            if (V.getStaticValue() < this.beta) {
+                this.beta = V.getStaticValue();
+                this.board = childBoard;
+            }
+        }
+        return this.board;
+    }
+
+    public int getNewPlayer(int player){
+        if (player == 1){
+            return 2;
+        } else{
+            return 1;
         }
     }
 
-    public int staticValue(Board board){
+    public Board staticValue(Board board){
 
 
 
-        return this.boardValue;
+        return board;
     }
 
     private List<Board> getBoards(Board board, int player, int numberOfPiecesForPlayer) {
@@ -54,8 +90,8 @@ public class Node {
         Board tmpBoard = copyBoard(board);
 
         switch(numberOfPiecesForPlayer){
-                //For case 1 og 2 tages en brik fra hånden og sættes
-                //i et tomt felt
+            //For case 1 og 2 tages en brik fra hånden og sættes
+            //i et tomt felt
             case 1:
 
             case 2:
@@ -67,22 +103,22 @@ public class Node {
                     }
                 }
                 break;
-                //For case 3 skal der fjernes en brik fra brættet
-                //Som sættes ned i et tomt felt.
+            //For case 3 skal der fjernes en brik fra brættet
+            //Som sættes ned i et tomt felt.
             case 3:
                 for (int index =0;index<9;index++){
-                if (tmpBoard.getOwner(index)==player){
-                    for (int tmpIndex = 0; tmpIndex<9;tmpIndex++){
-                        if(tmpBoard.getOwner(tmpIndex)==0){
-                            tmpBoard.setOwner(tmpIndex,player);
-                            tmpBoard.setOwner(index,0);
-                            newListOfBoards.add(tmpBoard);
-                            tmpBoard.setOwner(tmpIndex,0);
-                            tmpBoard.setOwner(index,player);
+                    if (tmpBoard.getOwner(index)==player){
+                        for (int tmpIndex = 0; tmpIndex<9;tmpIndex++){
+                            if(tmpBoard.getOwner(tmpIndex)==0){
+                                tmpBoard.setOwner(tmpIndex,player);
+                                tmpBoard.setOwner(index,0);
+                                newListOfBoards.add(tmpBoard);
+                                tmpBoard.setOwner(tmpIndex,0);
+                                tmpBoard.setOwner(index,player);
+                            }
                         }
                     }
                 }
-            }
                 break;
         }
         return newListOfBoards;
@@ -96,15 +132,6 @@ public class Node {
         return boardCopy;
     }
 
-    public Node getChild(int childNumber){
-        if (childNumber>9 || childNumber < 0){
-            return null;
-        }
-        if (nodeArray[childNumber]==null){
-            return null;
-        }
-        return nodeArray[childNumber];
-    }
     private boolean nextMaxiMini(){
         return !this.maxiMini;
     }
