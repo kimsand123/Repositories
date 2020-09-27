@@ -1,10 +1,11 @@
 package com.company.tictactoe;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Game {
-    int players;
-    int humanPlayer;
+    //int players;
+    int humanPlayer=2;
     int firstPlayer;
     Board board = new Board();
     int[] cord = new int[2];
@@ -12,46 +13,66 @@ public class Game {
     String s;
     String[] cordString;
 
-    public void Game(int players, int humanPlayer, int firstPlayer){
-        this.players = players;
-        this.humanPlayer = humanPlayer;
+    public void Game(int firstPlayer){
+
+        // this.players = players;
+        //this.humanPlayer = humanPlayer;
         this.firstPlayer = firstPlayer;
         startGame(firstPlayer);
-        board.printBoard();
+
     }
 
-    private void startGame(int player){
+    private void startGame(int player) {
 
-        while (true){
-            if (board.maxPlayerPieces[player]<3){
-                if (player == humanPlayer){
-                    System.out.println("Enter x,y coordinate for putting a playing piece");
-                    s = input.nextLine();
-                    cordString=s.split(",");
-                    cord[0]=Integer.parseInt(cordString[0]);
-                    cord[1]=Integer.parseInt(cordString[1]);
-                    int index = (cord[1]-1)*3+cord[0-1]
-                    //get Coordinates for placing piece into cord. 0=x, 1=y
-                }else{
-                    //Do the AlphaBetaThing and get Coordinates for placing piece into cord. 0=x, 1=y
-                }
-                //If the move goes through change to new player otherwise just repeat loop;
-                if(threeFirstRounds(player, cord[0], cord[1])){
-                    player = getNewPlayer(player);
-                }
-            } else
-                if (player == humanPlayer){
-                    //move piece from one field to another.
-                } else {
-                    //Have computerplayer move piece from one field to another.
-                }
-
-
-
+        while (true) {
             board.printBoard();
-        }
+            if (board.numberOfTokensOnTheBoard < 6) {
+                if (player == humanPlayer) {
+                    System.out.println("Enter x,y coordinate for putting a token on the board");
+                    s = input.nextLine();
+                    cordString = s.split(",");
+                    cord[0] = Integer.parseInt(cordString[0]);
+                    cord[1] = Integer.parseInt(cordString[1]);
+                    int index = (cord[1] - 1) * 3 + cord[0] - 1;
+                    board.setOwner(index, player);
+                    board.setNumberOfTokensOnTheBoard(board.getNumberOfTokensOnTheBoard() + 1);
+                    System.out.println(board.getNumberOfTokensOnTheBoard());
+                    //get Coordinates for placing piece into cord. 0=x, 1=y
+                }
+            }else {
+                if (player == humanPlayer) {
+                    int[] cord = new int[4];
+                    System.out.println("Enter fromX,fromY,toX,toY coordinate moving a token");
+                    s = input.nextLine();
+                    cordString = s.split(",");
+                    cord[0] = Integer.parseInt(cordString[0]);
+                    cord[1] = Integer.parseInt(cordString[1]);
+                    cord[2] = Integer.parseInt(cordString[2]);
+                    cord[3] = Integer.parseInt(cordString[3]);
+                    int fromIndex = (cord[1] - 1) * 3 + cord[0] - 1;
+                    int toIndex = (cord[3] - 1) * 3 + cord[2] - 1;
+                    board.movePiece(fromIndex, toIndex);
+                    //move piece from one field to another.
+                }
+            }
+            Node node=new Node();
+            Board AIMove;
+            int alpha = -1000;
+            int beta = 1000;
+            boolean leaf=false;
+            boolean maxiMini = true;
+            int maxDepth = 2;
+            int depth = 0;
 
+            AIMove = node.alphaBetaExecute(board, alpha, beta, maxiMini, player, maxDepth, depth);
+            board.recordAIMove(AIMove);
+            //Do the AlphaBetaThing and get Coordinates for placing piece into cord. 0=x, 1=y
+            player = getNewPlayer(player);
+        }
     }
+
+
+
 
     private int getNewPlayer(int player){
         if (player == 1){
@@ -59,19 +80,6 @@ public class Game {
         }
         return 1;
     }
-
-    public boolean threeFirstRounds(int x, int y, int player){
-
-        //return board.setOwner(x,y,player);
-    }
-
-    public void normalRounds(){
-
-    }
-
-    //
-
-
 }
 
 

@@ -2,6 +2,7 @@ package com.company.tictactoe;
 
 public class Board {
     Field[] board = new Field[10];
+    int numberOfTokensOnTheBoard=0;
 
     public Board() {
         initBoard(0,  3);
@@ -56,6 +57,7 @@ public class Board {
     }
 
     public void printBoard(){
+        System.out.println("Start TicTacToe");
         StringBuilder boardString = new StringBuilder();
 
         for(int index = 0; index<9;index++){
@@ -75,19 +77,62 @@ public class Board {
                 boardString.append("\n");
             }
         }
+        System.out.println(boardString.toString());
     }
 
-    public int calculateBoardValue(Board board, int player){
-        int boardValue=0, horizontalWin=0, verticalWin=0, yx1=0, yx2 = 0, yx3 = 0;
+    public int calculateBoardValue(int player){
+        int boardValue=0;
         //check Corners
         for (int index = 0; index<9;index++){
-                if (board.getOwner(index)==player){
-                    boardValue=boardValue+board.getValue(index);
-                }
+            if (getOwner(index)==player){
+                boardValue=boardValue+getValue(index);
             }
-            if (boardValue==8 || boardValue==10) {
-                boardValue = 100;
-            }
-        return boardValue;
         }
+        if(checkForWin(board, player)){
+            boardValue=100;
+        }
+
+        setStaticValue(boardValue);
+        return getStaticValue();
+    }
+
+    private boolean checkForWin(Field[] board, int player) {
+        //Vandrette wins
+        for (int y=0;y<3;y++) {
+            if (board[0 + y * 3].getOwner() == player && board[1 + y * 3].getOwner() == player && board[2 + y * 3].getOwner() == player) {
+                return true;
+            }
+        }
+        //Lodrette wins
+        for (int x= 0;x<3;x++) {
+            if (board[0+x].getOwner() == player && board[3+x].getOwner() == player && board[6+x].getOwner() == player) {
+                return true;
+            }
+        }
+        //Skrå wins
+        if (board[0].getOwner()==player && board[4].getOwner()==player && board[8].getOwner()==player){
+            return true;
+        }
+        if (board[2].getOwner()==player && board[4].getOwner()==player && board[6].getOwner()==player){
+            return true;
+        }
+
+
+
+        return false;
+    }
+
+    public void recordAIMove(Board board){
+        for (int taller = 0;taller<9;taller++){
+            setOwner(taller, board.getOwner(taller));
+        }
+    }
+
+    public void setNumberOfTokensOnTheBoard(int numberOfTokensOnTheBoard){
+        this.numberOfTokensOnTheBoard = numberOfTokensOnTheBoard;
+    }
+
+    public int getNumberOfTokensOnTheBoard (){
+        return this.numberOfTokensOnTheBoard;
+    }
 }

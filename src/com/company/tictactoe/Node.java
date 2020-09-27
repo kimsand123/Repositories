@@ -1,5 +1,6 @@
 package com.company.tictactoe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
@@ -16,17 +17,7 @@ public class Node {
     private int numberOfPiecesForPlayer=0;
     private int player = 0;
 
-    public Node(List<Board> childList, int alpha, int beta, boolean leaf, boolean maxiMini, int player, int maxDepth, int depth){
-        this.board = board;
-        this.alpha = alpha;
-        this.beta = beta;
-        this.leaf = leaf;
-        this.maxiMini = maxiMini;
-        this.maxDepth = maxDepth;
-        this.depth = depth;
-        this.player = player;
-
-
+    public Node(){
     }
 
     public Board alphaBetaExecute(Board board, int alpha, int beta, boolean maxiMini, int player, int maxDepth, int depth){
@@ -43,28 +34,39 @@ public class Node {
         }
 
         if (depth == maxDepth){
-            return staticValue(board);
+            return board;
         }
 
-        List<Board> listOfBoards = getBoards(board, player, numberOfPiecesForPlayer);
+        ArrayList<Board> listOfBoards = getBoards(board, player, numberOfPiecesForPlayer);
         if (isMaxiMini()){
-            while (this.alpha<this.beta|| !(listOfBoards.isEmpty())) {
-                Board childBoard = listOfBoards.remove(1);
-                Board V = alphaBetaExecute(childBoard,alpha,beta,!maxiMini,getNewPlayer(player),maxDepth,depth+1);
-                if(V.getStaticValue()>this.alpha){
-                    this.alpha=V.getStaticValue();
-                    this.board = childBoard;
+            //Maximizer
+            while (this.alpha<this.beta) {
+                if (listOfBoards.isEmpty()) {
+                    break;
+                }else{
+                    Board childBoard = listOfBoards.remove(0);
+                    Board V = alphaBetaExecute(childBoard, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
+                    int staticValue = V.calculateBoardValue(player);
+                    if (staticValue > this.alpha) {
+                        this.alpha = staticValue;
+                        this.board = V;
+                    }
                 }
             }
             return this.board;
         }
-
-        while (this.alpha<this.beta||!(listOfBoards.isEmpty())) {
-            Board childBoard = listOfBoards.remove(1);
-            Board V = alphaBetaExecute(board, alpha, beta, !maxiMini, getNewPlayer(player), maxDepth, depth + 1);
-            if (V.getStaticValue() < this.beta) {
-                this.beta = V.getStaticValue();
-                this.board = childBoard;
+        //Minimizer
+        while (this.alpha<this.beta) {
+            if (listOfBoards.isEmpty()) {
+                break;
+            }else{
+                Board childBoard = listOfBoards.remove(0);
+                Board V = alphaBetaExecute(board, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
+                int staticValue = V.calculateBoardValue(player);
+                if (staticValue < this.beta) {
+                    this.beta = staticValue;
+                    this.board = V;
+                }
             }
         }
         return this.board;
@@ -78,27 +80,21 @@ public class Node {
         }
     }
 
-    public Board staticValue(Board board){
-
-
-
-        return board;
-    }
-
-    private List<Board> getBoards(Board board, int player, int numberOfPiecesForPlayer) {
-        List<Board> newListOfBoards = null;
+    private ArrayList<Board> getBoards(Board board, int player, int numberOfPiecesForPlayer) {
+        ArrayList<Board> newListOfBoards = new ArrayList<>();
         Board tmpBoard = copyBoard(board);
 
         switch(numberOfPiecesForPlayer){
             //For case 1 og 2 tages en brik fra hånden og sættes
             //i et tomt felt
+            case 0:
             case 1:
 
             case 2:
                 for(int index = 0;index<9;index++){
                     if(tmpBoard.getOwner(index)==0){
                         tmpBoard.setOwner(index, player);
-                        newListOfBoards.add(tmpBoard);
+                        newListOfBoards.add(copyBoard(tmpBoard));
                         tmpBoard.setOwner(index,0);
                     }
                 }

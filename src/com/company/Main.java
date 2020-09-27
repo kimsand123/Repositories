@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.maze.Maze;
+import com.company.tictactoe.Game;
 
 public class Main {
 
@@ -59,5 +60,11 @@ public class Main {
 
         maze2.printMaze();
         Astar pathSeach = new Astar(maze2);
+
+        System.out.println();
+        System.out.println();
+        Game game = new Game();
+        game.Game(1);
+
     }
 }
