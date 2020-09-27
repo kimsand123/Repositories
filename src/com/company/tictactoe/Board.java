@@ -82,6 +82,9 @@ public class Board {
 
     public int calculateBoardValue(int player){
         int boardValue=0;
+        int playerValue=0;
+        int otherPlayerValue=0;
+        int otherPlayer=getOtherPlayer(player);
         //check Corners
         for (int index = 0; index<9;index++){
             if (getOwner(index)==player){
@@ -91,9 +94,28 @@ public class Board {
         if(checkForWin(board, player)){
             boardValue=100;
         }
-
-        setStaticValue(boardValue);
+        playerValue=boardValue;
+        //Check boardvalue for otherplayer
+        boardValue=0;
+        //check Corners
+        for (int index = 0; index<9;index++){
+            if (getOwner(index)==otherPlayer){
+                boardValue=boardValue+getValue(index);
+            }
+        }
+        if(checkForWin(board, otherPlayer)){
+            boardValue=100;
+        }
+        otherPlayerValue=boardValue;
+        setStaticValue(playerValue-otherPlayerValue);
         return getStaticValue();
+    }
+
+    private int getOtherPlayer(int player){
+        if (player == 1){
+            return 2;
+        }
+        return 1;
     }
 
     private boolean checkForWin(Field[] board, int player) {

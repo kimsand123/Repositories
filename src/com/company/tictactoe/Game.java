@@ -61,7 +61,7 @@ public class Game {
             int beta = 1000;
             boolean leaf=false;
             boolean maxiMini = true;
-            int maxDepth = 2;
+            int maxDepth = 10;
             int depth = 0;
 
             AIMove = node.alphaBetaExecute(board, alpha, beta, maxiMini, player, maxDepth, depth);
