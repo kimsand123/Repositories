@@ -6,7 +6,7 @@ public class Tree {
     Board board = new Board();
     Node tree;
 
-    public Tree(Board board, int player){
+    /*public Tree(Board board, int player){
          tree = new Node(board, -1000, 1000,false, player);
     }
 
@@ -14,17 +14,6 @@ public class Tree {
         Node node = new Node(board, alpha, beta, leaf, player);
 
         tree.addChild(node);
-    }
-
-    public Board makeBoard(Board board, int player){
-        Field[] freeFieldsOnBoard = new Field[9];
-        for (int counter = 0;counter<board.)
-
-    }
-
-
-
-
-
+    }*/
 
 }

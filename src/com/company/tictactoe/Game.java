@@ -30,6 +30,7 @@ public class Game {
                     cordString=s.split(",");
                     cord[0]=Integer.parseInt(cordString[0]);
                     cord[1]=Integer.parseInt(cordString[1]);
+                    int index = (cord[1]-1)*3+cord[0-1]
                     //get Coordinates for placing piece into cord. 0=x, 1=y
                 }else{
                     //Do the AlphaBetaThing and get Coordinates for placing piece into cord. 0=x, 1=y
