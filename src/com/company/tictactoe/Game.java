@@ -1,6 +1,5 @@
 package com.company.tictactoe;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -32,7 +31,7 @@ public class Game {
                     cord[1] = Integer.parseInt(cordString[1]);
                     int index = (cord[1] - 1) * 3 + cord[0] - 1;
                     board.setOwner(index, player);
-                    board.setNumberOfTokensOnTheBoard(board.getNumberOfTokensOnTheBoard() + 1);
+                    board.addNumberOfTokensToTheBoard();
                     System.out.println(board.getNumberOfTokensOnTheBoard());
                     //get Coordinates for placing piece into cord. 0=x, 1=y
                 }
@@ -52,6 +51,8 @@ public class Game {
                     //move piece from one field to another.
                 }
             }
+
+            //AI Player
             Node node=new Node();
             Board AIMove;
             int alpha = -1000;
