@@ -3,7 +3,6 @@ package com.company.tictactoe;
 import java.util.Scanner;
 
 public class Game {
-    //int players;
     int humanPlayer=2;
     int firstPlayer;
     Board board = new Board();
@@ -32,7 +31,7 @@ public class Game {
                     int index = (cord[1] - 1) * 3 + cord[0] - 1;
                     board.setOwner(index, player);
                     board.addNumberOfTokensToTheBoard();
-                    System.out.println(board.getNumberOfTokensOnTheBoard());
+                   // System.out.println(board.getNumberOfTokensOnTheBoard());
                     //get Coordinates for placing piece into cord. 0=x, 1=y
                 }
             }else {
@@ -48,31 +47,23 @@ public class Game {
                     int fromIndex = (cord[1] - 1) * 3 + cord[0] - 1;
                     int toIndex = (cord[3] - 1) * 3 + cord[2] - 1;
                     board.movePiece(fromIndex, toIndex);
-                    //move piece from one field to another.
                 }
+                player = getNewPlayer(player);
             }
 
             //AI Player
             Node node=new Node();
-            Board AIMove;
             int alpha = -1000;
             int beta = 1000;
-            boolean leaf=false;
-            boolean maxiMini = true;
-            int maxDepth = 1;
+            int maxDepth = 4;
             int depth = 0;
-            int bestMove = 0;
 
-            AIMove = node.alphaBetaExecute(board, alpha, beta, maxiMini, player, maxDepth, depth);
-            System.out.println("BestMove: "+AIMove.getBeta());
-            board.recordAIMove(AIMove);
+            int bestMoveAmount = node.alphaBetaExecute(board, alpha, beta, player, maxDepth, depth);
+            System.out.println("BestMove: "+bestMoveAmount);
             //Do the AlphaBetaThing and get Coordinates for placing piece into cord. 0=x, 1=y
             player = getNewPlayer(player);
         }
     }
-
-
-
 
     private int getNewPlayer(int player){
         if (player == 1){

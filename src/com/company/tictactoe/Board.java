@@ -37,7 +37,7 @@ public class Board {
         return Integer.parseInt(board[11]);
     }
 
-    public void setOwner(int index, int player) {
+    public void setOwner(int player, int index) {
         board[index] = String.valueOf(player);
     }
 
@@ -89,7 +89,7 @@ public class Board {
         System.out.println(boardString.toString());
     }
 
-    public int calculateBoardValue(){
+    public int calculateBoardValue(int depth){
         int boardValue=0;
         int playerValue=0;
         int otherPlayerValue=0;
@@ -100,7 +100,7 @@ public class Board {
             }
         }
         if(checkForWin(board, 1)){
-            boardValue=100;
+            boardValue=100-5*depth;
         }
         playerValue=boardValue;
         //Check boardvalue for otherplayer
@@ -112,10 +112,8 @@ public class Board {
             }
         }
         if(checkForWin(board, 2)){
-            boardValue=-100;
+            boardValue=-100+5*depth;
         }
-
-
         setStaticValue(playerValue-otherPlayerValue);
         return getStaticValue();
     }
@@ -147,9 +145,6 @@ public class Board {
         if (Integer.parseInt(board[2])==player && Integer.parseInt(board[4])==player && Integer.parseInt(board[6])==player){
             return true;
         }
-
-
-
         return false;
     }
 
@@ -163,7 +158,22 @@ public class Board {
         this.numberOfTokensOnTheBoard = this.numberOfTokensOnTheBoard + 1;
     }
 
-    public int getNumberOfTokensOnTheBoard (){
+    public int getNumberOfTokensFromTheBoard(){
         return this.numberOfTokensOnTheBoard;
     }
+
+    public String[] getBoardData() {
+        String[] boardData = new String[12];
+        for (int taller = 0; taller<9;taller++){
+            boardData[taller] = board[taller];
+        }
+        return boardData;
+    }
+
+    public void setBoardData(String[] boardData){
+        for (int taller = 0; taller<9;taller++){
+            board[taller] = boardData[taller];
+        }
+    }
+
 }

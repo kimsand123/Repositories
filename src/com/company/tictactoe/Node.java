@@ -1,82 +1,83 @@
 package com.company.tictactoe;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
 
-    private int maxDepth;
-    private int depth;
     private List<Board> listOfChildren;
-    private int alpha;
-    private int beta;
     private Board board;
-    private boolean leaf; //leaf = true, node = false
-    private boolean maxiMini; //1=maximizer, 0=minimizer
     private int boardValue = 0;
     private int numberOfPiecesForPlayer = 0;
-    private int player = 0;
+    private ArrayList<String> legalMoves = new ArrayList<>();
 
     public Node() {
     }
 
-    public Board alphaBetaExecute(Board board, int alpha, int beta, boolean maxiMini, int player, int maxDepth, int depth) {
-        this.alpha = alpha;
-        this.beta = beta;
-        this.maxiMini = maxiMini;
-        this.maxDepth = maxDepth;
-        this.depth = depth;
-        this.board = board;
-        this.player = player;
+    public int alphaBetaExecute(Board board, int incomingAlpha, int incomingBeta, int player, int maxDepth, int depth) {
+        int alpha = incomingAlpha;
+        int beta = incomingBeta;
 
-
-
-        if (board.getNumberOfTokensOnTheBoard()>=6) {
+        if (board.getNumberOfTokensFromTheBoard()>=6) {
             numberOfPiecesForPlayer = 3;
         }
         //Hvis tilstand er et leaf
-        if (isLeaf()) {
-            board.calculateBoardValue();
-            return this.board;
+        if (maxDepth==depth) {
+            return board.calculateBoardValue(depth);
         }
-        ArrayList<Board> listOfBoards = getBoards(board, player, numberOfPiecesForPlayer);
-        if (isMaxiMini()) {
+        legalMoves = getLegalMoves(board, player, numberOfPiecesForPlayer);
+        //If it is a maximizer
+        if (depth%2==0) {
             //Maximizer
-            while (this.alpha < this.beta) {
-                //Hvis node er en maximizer
-                if (listOfBoards.isEmpty()) {
+            while (alpha < beta) {
+                if (legalMoves.isEmpty()) {
                     break;
                 } else {
                     //Tag en tilstand fra antallet af beregnede tilstande og alphaBeta den
-                    Board childBoard = listOfBoards.remove(0);
-                    Board V = alphaBetaExecute(childBoard, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
-                    if (V.getStaticValue() > this.alpha) {
-                        this.alpha = V.getStaticValue();
-                        board.setStaticValue(V.getStaticValue());
-                        board.setAlpha(this.alpha);
+
+                    Board newBoard = performMove(legalMoves.remove(0), board);
+                    newBoard.calculateBoardValue(player);
+                    int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1);
+                    if (V > alpha) {
+                        alpha = V;
                     }
                 }
             }
-            return this.board;
+            return alpha;
         }
         //Minimizer
-        while (this.alpha < this.beta) {
-            if (listOfBoards.isEmpty()) {
+        while (alpha < beta) {
+            if (legalMoves.isEmpty()) {
                 break;
             } else {
-                Board childBoard = listOfBoards.remove(0);
-                Board V = alphaBetaExecute(board, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
-                if (V.getStaticValue() < this.beta) {
-                    this.beta = V.getStaticValue();
-                    board.setStaticValue(V.getStaticValue());
-                    board.setBeta(this.beta);
+                Board newBoard = performMove(legalMoves.remove(0), board);
+                newBoard.calculateBoardValue(player);
+                int V = alphaBetaExecute(board, alpha, beta, getNewPlayer(player), maxDepth, depth + 1);
+                if (V<beta) {
+                    beta = V;
                 }
             }
         }
-        return this.board;
+        return beta;
     }
 
-
+    private Board performMove(String legalMove, Board board) {
+        Board newBoard = new Board();
+        newBoard.setBoardData(board.getBoardData());
+        String[] splitMoveData;
+        splitMoveData= legalMove.split(",");
+        switch(splitMoveData[0]){
+            case "put":
+                newBoard.setOwner(Integer.parseInt(splitMoveData[1]),Integer.parseInt(splitMoveData[2]));
+                break;
+            case "move":
+                newBoard.movePiece(Integer.parseInt(splitMoveData[1]), Integer.parseInt(splitMoveData[2]));
+                break;
+        }
+        return newBoard;
+    }
+    
     public int getNewPlayer(int player){
         if (player == 1){
             return 2;
@@ -85,44 +86,43 @@ public class Node {
         }
     }
 
-    private ArrayList<Board> getBoards(Board board, int player, int numberOfPiecesForPlayer) {
-        ArrayList<Board> newListOfBoards = new ArrayList<>();
-
-
+    private ArrayList<String> getLegalMoves(Board board, int player, int numberOfPiecesForPlayer) {
+        ArrayList<String> legalMoves = new ArrayList<>();
+        int moveIndex=0;
         switch(numberOfPiecesForPlayer){
+
             //For case 1 og 2 tages en brik fra hånden og sættes
             //i et tomt felt
             case 0:
             case 1:
-
+            //put,player,index
             case 2:
                 for(int index = 0;index<9;index++){
-                    Board tmpBoard = copyBoard(board);
-                    if(tmpBoard.getOwner(index)==0){
-                        tmpBoard.setOwner(index, player);
-                        tmpBoard.addNumberOfTokensToTheBoard();
-                        newListOfBoards.add(tmpBoard);
+                    if(board.getOwner(index)==0){
+                        legalMoves.add("put,"+player+","+index);
+                        //legalMoves[moveIndex]="put,"+player+","+index;
+                        moveIndex++;
                     }
                 }
                 break;
             //For case 3 skal der fjernes en brik fra brættet
             //Som sættes ned i et tomt felt.
+            //move,fromIndex,toIndex
             case 3:
                 for (int index =0;index<9;index++){
-                    Board tmpBoard = copyBoard(board);
-                    if (tmpBoard.getOwner(index)==player){
-                        for (int tmpIndex = 0; tmpIndex<9;tmpIndex++){
-                            if(tmpBoard.getOwner(tmpIndex)==0){
-                                tmpBoard.setOwner(tmpIndex,player);
-                                tmpBoard.setOwner(index,0);
-                                newListOfBoards.add(tmpBoard);
+                    if (board.getOwner(index)==player){
+                        for (int newIndex = 0; newIndex<9;newIndex++){
+                            if(board.getOwner(newIndex)==0){
+                                legalMoves.add("move,"+moveIndex+","+newIndex);
+                                //legalMoves[moveIndex]="move,"+moveIndex+","+newIndex;
+                                moveIndex++;
                             }
                         }
                     }
                 }
                 break;
         }
-        return newListOfBoards;
+        return legalMoves;
     }
 
     private Board copyBoard(Board board){
@@ -133,17 +133,6 @@ public class Node {
         return boardCopy;
     }
 
-    private boolean nextMaxiMini(){
-        return !this.maxiMini;
-    }
-
-    public boolean isLeaf() {
-        if (depth==maxDepth){
-            return true;
-        }
-        return false;
-    }
-
     public Board getBoard() {
         return board;
     }
@@ -151,36 +140,4 @@ public class Node {
     public void setBoard(Board board) {
         this.board = board;
     }
-
-    /*public int getAlpha() {
-        return alpha;
-    }*/
-
-    public void setAlpha(int alpha) {
-        this.alpha = alpha;
-    }
-
-    /*public int getBeta() {
-        return beta;
-    }*/
-
-    public void setBeta(int beta) {
-        this.beta = beta;
-    }
-
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    /*public void setMaxDepth(int maxDepth) {
-        this.maxDepth = maxDepth;
-    }*/
-
-    public boolean isMaxiMini() {
-        return maxiMini;
-    }
-
-   /* public void setMaxiMini(boolean maxiMini) {
-        this.maxiMini = maxiMini;
-    }*/
 }
