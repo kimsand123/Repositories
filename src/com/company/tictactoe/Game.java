@@ -18,7 +18,6 @@ public class Game {
     }
 
     private void startGame(int player) {
-
         while (true) {
             board.printBoard();
             if (board.numberOfTokensOnTheBoard < 6) {
@@ -50,12 +49,11 @@ public class Game {
                 }
                 player = getNewPlayer(player);
             }
-
             //AI Player
             Node node=new Node();
             int alpha = -1000;
             int beta = 1000;
-            int maxDepth = 4;
+            int maxDepth = 1;
             int depth = 0;
 
             int bestMoveAmount = node.alphaBetaExecute(board, alpha, beta, player, maxDepth, depth);

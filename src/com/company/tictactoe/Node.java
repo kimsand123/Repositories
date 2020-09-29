@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-
-    private List<Board> listOfChildren;
-    private Board board;
-    private int boardValue = 0;
     private int numberOfPiecesForPlayer = 0;
     private ArrayList<String> legalMoves = new ArrayList<>();
 
@@ -77,7 +73,7 @@ public class Node {
         }
         return newBoard;
     }
-    
+
     public int getNewPlayer(int player){
         if (player == 1){
             return 2;
@@ -90,7 +86,6 @@ public class Node {
         ArrayList<String> legalMoves = new ArrayList<>();
         int moveIndex=0;
         switch(numberOfPiecesForPlayer){
-
             //For case 1 og 2 tages en brik fra hånden og sættes
             //i et tomt felt
             case 0:
@@ -131,13 +126,5 @@ public class Node {
             boardCopy.setOwner(taller, board.getOwner(taller));
         }
         return boardCopy;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
     }
 }
