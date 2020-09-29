@@ -31,12 +31,12 @@ public class Node {
 
 
 
-        if (depth > 3) {
+        if (board.getNumberOfTokensOnTheBoard()>=6) {
             numberOfPiecesForPlayer = 3;
         }
         //Hvis tilstand er et leaf
         if (isLeaf()) {
-            board.calculateBoardValue(player);
+            board.calculateBoardValue();
             return this.board;
         }
         ArrayList<Board> listOfBoards = getBoards(board, player, numberOfPiecesForPlayer);
@@ -50,9 +50,9 @@ public class Node {
                     //Tag en tilstand fra antallet af beregnede tilstande og alphaBeta den
                     Board childBoard = listOfBoards.remove(0);
                     Board V = alphaBetaExecute(childBoard, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
-                    if (V.getAlpha() > this.alpha) {
-                        this.alpha = V.getAlpha();
-                        board.setStaticValue(V.getAlpha());
+                    if (V.getStaticValue() > this.alpha) {
+                        this.alpha = V.getStaticValue();
+                        board.setStaticValue(V.getStaticValue());
                         board.setAlpha(this.alpha);
                     }
                 }
@@ -66,9 +66,9 @@ public class Node {
             } else {
                 Board childBoard = listOfBoards.remove(0);
                 Board V = alphaBetaExecute(board, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
-                if (V.getBeta() < this.beta) {
-                    this.beta = V.getBeta();
-                    board.setStaticValue(V.getAlpha());
+                if (V.getStaticValue() < this.beta) {
+                    this.beta = V.getStaticValue();
+                    board.setStaticValue(V.getStaticValue());
                     board.setBeta(this.beta);
                 }
             }
@@ -87,7 +87,7 @@ public class Node {
 
     private ArrayList<Board> getBoards(Board board, int player, int numberOfPiecesForPlayer) {
         ArrayList<Board> newListOfBoards = new ArrayList<>();
-        Board tmpBoard = copyBoard(board);
+
 
         switch(numberOfPiecesForPlayer){
             //For case 1 og 2 tages en brik fra hånden og sættes
@@ -97,10 +97,11 @@ public class Node {
 
             case 2:
                 for(int index = 0;index<9;index++){
+                    Board tmpBoard = copyBoard(board);
                     if(tmpBoard.getOwner(index)==0){
                         tmpBoard.setOwner(index, player);
-                        newListOfBoards.add(copyBoard(tmpBoard));
-                        tmpBoard.setOwner(index,0);
+                        tmpBoard.addNumberOfTokensToTheBoard();
+                        newListOfBoards.add(tmpBoard);
                     }
                 }
                 break;
@@ -108,14 +109,13 @@ public class Node {
             //Som sættes ned i et tomt felt.
             case 3:
                 for (int index =0;index<9;index++){
+                    Board tmpBoard = copyBoard(board);
                     if (tmpBoard.getOwner(index)==player){
                         for (int tmpIndex = 0; tmpIndex<9;tmpIndex++){
                             if(tmpBoard.getOwner(tmpIndex)==0){
                                 tmpBoard.setOwner(tmpIndex,player);
                                 tmpBoard.setOwner(index,0);
                                 newListOfBoards.add(tmpBoard);
-                                tmpBoard.setOwner(tmpIndex,0);
-                                tmpBoard.setOwner(index,player);
                             }
                         }
                     }
