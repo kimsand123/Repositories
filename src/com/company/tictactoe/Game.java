@@ -14,9 +14,6 @@ public class Game {
     String[] cordString;
 
     public void Game(int firstPlayer){
-
-        // this.players = players;
-        //this.humanPlayer = humanPlayer;
         this.firstPlayer = firstPlayer;
         startGame(firstPlayer);
 
@@ -61,10 +58,12 @@ public class Game {
             int beta = 1000;
             boolean leaf=false;
             boolean maxiMini = true;
-            int maxDepth = 10;
+            int maxDepth = 1;
             int depth = 0;
+            int bestMove = 0;
 
             AIMove = node.alphaBetaExecute(board, alpha, beta, maxiMini, player, maxDepth, depth);
+            System.out.println("BestMove: "+AIMove.getBeta());
             board.recordAIMove(AIMove);
             //Do the AlphaBetaThing and get Coordinates for placing piece into cord. 0=x, 1=y
             player = getNewPlayer(player);

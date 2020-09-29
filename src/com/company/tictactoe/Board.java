@@ -1,7 +1,7 @@
 package com.company.tictactoe;
 
 public class Board {
-    Field[] board = new Field[10];
+    Field[] board = new Field[12];
     int numberOfTokensOnTheBoard=0;
 
     public Board() {
@@ -15,6 +15,8 @@ public class Board {
         initBoard(7,  2);
         initBoard(8,  3);
         initBoard(9,0);//The static value of the board
+        initBoard(10,0 );//Alpha
+        initBoard(11,0);//Beta
     }
 
     private void initBoard(int index, int value) {
@@ -29,6 +31,24 @@ public class Board {
         valueField.setValue(value);
         board[9]=valueField;
     }
+
+    public void setAlpha(int alpha){
+        Field alphaField = new Field();
+        alphaField.setValue(alpha);
+        board[10]=alphaField;
+    }
+    public int getAlpha(){
+        return board[10].getValue();
+    }
+    public void setBeta(int beta){
+        Field alphaField = new Field();
+        alphaField.setValue(beta);
+        board[11]=alphaField;
+    }
+    public int getBeta(){
+        return board[11].getValue();
+    }
+
 
     public int getStaticValue(){
         return board[9].getValue();
@@ -85,13 +105,13 @@ public class Board {
         int playerValue=0;
         int otherPlayerValue=0;
         int otherPlayer=getOtherPlayer(player);
-        //check Corners
+        //check Board
         for (int index = 0; index<9;index++){
-            if (getOwner(index)==player){
+            if (getOwner(index)==1){
                 boardValue=boardValue+getValue(index);
             }
         }
-        if(checkForWin(board, player)){
+        if(checkForWin(board, 1)){
             boardValue=100;
         }
         playerValue=boardValue;
@@ -99,14 +119,15 @@ public class Board {
         boardValue=0;
         //check Corners
         for (int index = 0; index<9;index++){
-            if (getOwner(index)==otherPlayer){
+            if (getOwner(index)==2){
                 boardValue=boardValue+getValue(index);
             }
         }
-        if(checkForWin(board, otherPlayer)){
-            boardValue=100;
+        if(checkForWin(board, 2)){
+            boardValue=-100;
         }
-        otherPlayerValue=boardValue;
+
+
         setStaticValue(playerValue-otherPlayerValue);
         return getStaticValue();
     }

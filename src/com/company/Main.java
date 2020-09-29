@@ -61,6 +61,7 @@ public class Main {
         maze2.printMaze();
         Astar pathSeach = new Astar(maze2);
 
+        //TicTacToe
         System.out.println();
         System.out.println();
         Game game = new Game();

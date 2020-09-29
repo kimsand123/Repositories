@@ -13,14 +13,14 @@ public class Node {
     private Board board;
     private boolean leaf; //leaf = true, node = false
     private boolean maxiMini; //1=maximizer, 0=minimizer
-    private int boardValue=0;
-    private int numberOfPiecesForPlayer=0;
+    private int boardValue = 0;
+    private int numberOfPiecesForPlayer = 0;
     private int player = 0;
 
-    public Node(){
+    public Node() {
     }
 
-    public Board alphaBetaExecute(Board board, int alpha, int beta, boolean maxiMini, int player, int maxDepth, int depth){
+    public Board alphaBetaExecute(Board board, int alpha, int beta, boolean maxiMini, int player, int maxDepth, int depth) {
         this.alpha = alpha;
         this.beta = beta;
         this.maxiMini = maxiMini;
@@ -29,48 +29,53 @@ public class Node {
         this.board = board;
         this.player = player;
 
-        if(depth>3){
+
+
+        if (depth > 3) {
             numberOfPiecesForPlayer = 3;
         }
-
-        if (depth == maxDepth){
-            return board;
+        //Hvis tilstand er et leaf
+        if (isLeaf()) {
+            board.calculateBoardValue(player);
+            return this.board;
         }
-
         ArrayList<Board> listOfBoards = getBoards(board, player, numberOfPiecesForPlayer);
-        if (isMaxiMini()){
+        if (isMaxiMini()) {
             //Maximizer
-            while (this.alpha<this.beta) {
+            while (this.alpha < this.beta) {
+                //Hvis node er en maximizer
                 if (listOfBoards.isEmpty()) {
                     break;
-                }else{
+                } else {
+                    //Tag en tilstand fra antallet af beregnede tilstande og alphaBeta den
                     Board childBoard = listOfBoards.remove(0);
                     Board V = alphaBetaExecute(childBoard, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
-                    int staticValue = V.calculateBoardValue(player);
-                    if (staticValue > this.alpha) {
-                        this.alpha = staticValue;
-                        this.board = V;
+                    if (V.getAlpha() > this.alpha) {
+                        this.alpha = V.getAlpha();
+                        board.setStaticValue(V.getAlpha());
+                        board.setAlpha(this.alpha);
                     }
                 }
             }
             return this.board;
         }
         //Minimizer
-        while (this.alpha<this.beta) {
+        while (this.alpha < this.beta) {
             if (listOfBoards.isEmpty()) {
                 break;
-            }else{
+            } else {
                 Board childBoard = listOfBoards.remove(0);
                 Board V = alphaBetaExecute(board, alpha, beta, nextMaxiMini(), getNewPlayer(player), maxDepth, depth + 1);
-                int staticValue = V.calculateBoardValue(player);
-                if (staticValue < this.beta) {
-                    this.beta = staticValue;
-                    this.board = V;
+                if (V.getBeta() < this.beta) {
+                    this.beta = V.getBeta();
+                    board.setStaticValue(V.getAlpha());
+                    board.setBeta(this.beta);
                 }
             }
         }
         return this.board;
     }
+
 
     public int getNewPlayer(int player){
         if (player == 1){
@@ -133,11 +138,10 @@ public class Node {
     }
 
     public boolean isLeaf() {
-        return leaf;
-    }
-
-    public void setLeaf(boolean leaf) {
-        this.leaf = leaf;
+        if (depth==maxDepth){
+            return true;
+        }
+        return false;
     }
 
     public Board getBoard() {
