@@ -1,5 +1,6 @@
 package com.company.tictactoe;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
@@ -10,6 +11,7 @@ public class Game {
     Scanner input = new Scanner(System.in);
     String s;
     String[] cordString;
+    ArrayList<String> path = new ArrayList<>();
 
     public void Game(int firstPlayer){
         this.firstPlayer = firstPlayer;
@@ -47,18 +49,28 @@ public class Game {
                     int toIndex = (cord[3] - 1) * 3 + cord[2] - 1;
                     board.movePiece(fromIndex, toIndex);
                 }
-                player = getNewPlayer(player);
+
             }
+            board.printBoard();
             //AI Player
-            Node node=new Node();
+            Node rootNode=new Node();
             int alpha = -1000;
             int beta = 1000;
             int maxDepth = 1;
             int depth = 0;
 
-            int bestMoveAmount = node.alphaBetaExecute(board, alpha, beta, player, maxDepth, depth);
+            int bestMoveAmount = rootNode.alphaBetaExecute(board, alpha, beta, player, maxDepth, depth, path);
             System.out.println("BestMove: "+bestMoveAmount);
-            //Do the AlphaBetaThing and get Coordinates for placing piece into cord. 0=x, 1=y
+            String[] splitMoveData = path.remove(path.size()-1).split(",");
+            switch(splitMoveData[0]){
+                case "put":
+                    board.setOwner(Integer.parseInt(splitMoveData[1]),Integer.parseInt(splitMoveData[2]));
+                    break;
+                case "move":
+                    board.movePiece(Integer.parseInt(splitMoveData[1]), Integer.parseInt(splitMoveData[2]));
+                    break;
+            }
+
             player = getNewPlayer(player);
         }
     }

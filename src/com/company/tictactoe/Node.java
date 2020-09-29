@@ -11,7 +11,7 @@ public class Node {
     public Node() {
     }
 
-    public int alphaBetaExecute(Board board, int incomingAlpha, int incomingBeta, int player, int maxDepth, int depth) {
+    public int alphaBetaExecute(Board board, int incomingAlpha, int incomingBeta, int player, int maxDepth, int depth, ArrayList<String> path) {
         int alpha = incomingAlpha;
         int beta = incomingBeta;
 
@@ -32,11 +32,15 @@ public class Node {
                 } else {
                     //Tag en tilstand fra antallet af beregnede tilstande og alphaBeta den
 
-                    Board newBoard = performMove(legalMoves.remove(0), board);
+                    String legalMove = legalMoves.remove(0);
+                    Board newBoard = performMove(legalMove, board);
                     newBoard.calculateBoardValue(player);
-                    int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1);
+
+                    int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
                     if (V > alpha) {
+                        path.add(legalMove);
                         alpha = V;
+
                     }
                 }
             }
@@ -47,10 +51,12 @@ public class Node {
             if (legalMoves.isEmpty()) {
                 break;
             } else {
-                Board newBoard = performMove(legalMoves.remove(0), board);
+                String legalMove = legalMoves.remove(0);
+                Board newBoard = performMove(legalMove, board);
                 newBoard.calculateBoardValue(player);
-                int V = alphaBetaExecute(board, alpha, beta, getNewPlayer(player), maxDepth, depth + 1);
+                int V = alphaBetaExecute(board, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
                 if (V<beta) {
+                    path.add(legalMove);
                     beta = V;
                 }
             }
