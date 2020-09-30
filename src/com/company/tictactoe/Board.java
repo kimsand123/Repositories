@@ -62,7 +62,7 @@ public class Board {
     public void movePiece ( int fromIndex, int toIndex){
         int player = getOwner(fromIndex);
         removeOwner(fromIndex);
-        setOwner(toIndex, player);
+        setOwner(player, toIndex);
     }
 
     public void printBoard(){
@@ -112,8 +112,9 @@ public class Board {
             }
         }
         if(checkForWin(board, 2)){
-            boardValue=-100+5*depth;
+            boardValue=100+5*depth;
         }
+        otherPlayerValue=boardValue;
         setStaticValue(playerValue-otherPlayerValue);
         return getStaticValue();
     }

@@ -11,7 +11,7 @@ public class Game {
     Scanner input = new Scanner(System.in);
     String s;
     String[] cordString;
-    ArrayList<String> path = new ArrayList<>();
+
 
     public void Game(int firstPlayer){
         this.firstPlayer = firstPlayer;
@@ -30,10 +30,12 @@ public class Game {
                     cord[0] = Integer.parseInt(cordString[0]);
                     cord[1] = Integer.parseInt(cordString[1]);
                     int index = (cord[1] - 1) * 3 + cord[0] - 1;
-                    board.setOwner(index, player);
+                    board.setOwner(2, index);
                     board.addNumberOfTokensToTheBoard();
-                   // System.out.println(board.getNumberOfTokensOnTheBoard());
+                    // System.out.println(board.getNumberOfTokensOnTheBoard());
                     //get Coordinates for placing piece into cord. 0=x, 1=y
+                    board.printBoard();
+                    player=getNewPlayer(player);
                 }
             }else {
                 if (player == humanPlayer) {
@@ -48,30 +50,44 @@ public class Game {
                     int fromIndex = (cord[1] - 1) * 3 + cord[0] - 1;
                     int toIndex = (cord[3] - 1) * 3 + cord[2] - 1;
                     board.movePiece(fromIndex, toIndex);
+                    board.printBoard();
+                    player=getNewPlayer(player);
+
                 }
 
             }
-            board.printBoard();
+
             //AI Player
             Node rootNode=new Node();
             int alpha = -1000;
             int beta = 1000;
-            int maxDepth = 1;
+            int maxDepth = 3;
             int depth = 0;
+            ArrayList<String> path = new ArrayList<>();
 
-            int bestMoveAmount = rootNode.alphaBetaExecute(board, alpha, beta, player, maxDepth, depth, path);
+            int bestMoveAmount = rootNode.alphaBetaExecute(board, alpha, beta, 1, maxDepth, depth, path);
+            printPath(path);
             System.out.println("BestMove: "+bestMoveAmount);
-            String[] splitMoveData = path.remove(path.size()-1).split(",");
-            switch(splitMoveData[0]){
-                case "put":
-                    board.setOwner(Integer.parseInt(splitMoveData[1]),Integer.parseInt(splitMoveData[2]));
-                    break;
-                case "move":
-                    board.movePiece(Integer.parseInt(splitMoveData[1]), Integer.parseInt(splitMoveData[2]));
-                    break;
+            if (path.size()!=0) {
+                String[] splitMoveData = path.remove(path.size() - 1).split(",");
+                switch (splitMoveData[0]) {
+                    case "put":
+                        board.setOwner(1, Integer.parseInt(splitMoveData[2]));
+                        break;
+                    case "move":
+                        board.movePiece(Integer.parseInt(splitMoveData[1]), Integer.parseInt(splitMoveData[2]));
+                        break;
+                }
+                board.addNumberOfTokensToTheBoard();
+                player=getNewPlayer(player);
             }
+        }
+    }
 
-            player = getNewPlayer(player);
+    private void printPath(ArrayList<String> path) {
+        for(String i : path){
+            String[] data = i.split(",");
+            System.out.println("(Command:"+data[0]+", Player:"+data[1]+", index:"+data[2]);
         }
     }
 

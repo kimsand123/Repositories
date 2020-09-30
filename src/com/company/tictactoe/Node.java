@@ -1,12 +1,8 @@
 package com.company.tictactoe;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Node {
-    private int numberOfPiecesForPlayer = 0;
-    private ArrayList<String> legalMoves = new ArrayList<>();
 
     public Node() {
     }
@@ -14,24 +10,23 @@ public class Node {
     public int alphaBetaExecute(Board board, int incomingAlpha, int incomingBeta, int player, int maxDepth, int depth, ArrayList<String> path) {
         int alpha = incomingAlpha;
         int beta = incomingBeta;
+        int numberOfPlayingPieces=board.getNumberOfTokensFromTheBoard();
 
-        if (board.getNumberOfTokensFromTheBoard()>=6) {
-            numberOfPiecesForPlayer = 3;
-        }
         //Hvis tilstand er et leaf
         if (maxDepth==depth) {
             return board.calculateBoardValue(depth);
         }
-        legalMoves = getLegalMoves(board, player, numberOfPiecesForPlayer);
+
         //If it is a maximizer
         if (depth%2==0) {
             //Maximizer
+            ArrayList<String> legalMoves = getLegalMoves(board, player, numberOfPlayingPieces);
             while (alpha < beta) {
+
                 if (legalMoves.isEmpty()) {
                     break;
                 } else {
                     //Tag en tilstand fra antallet af beregnede tilstande og alphaBeta den
-
                     String legalMove = legalMoves.remove(0);
                     Board newBoard = performMove(legalMove, board);
                     newBoard.calculateBoardValue(player);
@@ -40,6 +35,7 @@ public class Node {
                     if (V > alpha) {
                         path.add(legalMove);
                         alpha = V;
+                        numberOfPlayingPieces = numberOfPlayingPieces +1;
 
                     }
                 }
@@ -47,17 +43,20 @@ public class Node {
             return alpha;
         }
         //Minimizer
+        ArrayList<String> legalMoves = getLegalMoves(board, player, numberOfPlayingPieces);
         while (alpha < beta) {
+
             if (legalMoves.isEmpty()) {
                 break;
             } else {
                 String legalMove = legalMoves.remove(0);
                 Board newBoard = performMove(legalMove, board);
                 newBoard.calculateBoardValue(player);
-                int V = alphaBetaExecute(board, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
+                int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
                 if (V<beta) {
                     path.add(legalMove);
                     beta = V;
+                    numberOfPlayingPieces = numberOfPlayingPieces +1;
                 }
             }
         }
@@ -91,38 +90,26 @@ public class Node {
     private ArrayList<String> getLegalMoves(Board board, int player, int numberOfPiecesForPlayer) {
         ArrayList<String> legalMoves = new ArrayList<>();
         int moveIndex=0;
-        switch(numberOfPiecesForPlayer){
-            //For case 1 og 2 tages en brik fra hånden og sættes
-            //i et tomt felt
-            case 0:
-            case 1:
-            //put,player,index
-            case 2:
-                for(int index = 0;index<9;index++){
-                    if(board.getOwner(index)==0){
-                        legalMoves.add("put,"+player+","+index);
-                        //legalMoves[moveIndex]="put,"+player+","+index;
-                        moveIndex++;
-                    }
+        if (numberOfPiecesForPlayer<6) {
+            for (int index = 0; index < 9; index++) {
+                if (board.getOwner(index) == 0) {
+                    legalMoves.add("put," + player + "," + index);
+
                 }
-                break;
-            //For case 3 skal der fjernes en brik fra brættet
-            //Som sættes ned i et tomt felt.
-            //move,fromIndex,toIndex
-            case 3:
-                for (int index =0;index<9;index++){
-                    if (board.getOwner(index)==player){
-                        for (int newIndex = 0; newIndex<9;newIndex++){
-                            if(board.getOwner(newIndex)==0){
-                                legalMoves.add("move,"+moveIndex+","+newIndex);
-                                //legalMoves[moveIndex]="move,"+moveIndex+","+newIndex;
-                                moveIndex++;
-                            }
+            }
+        } else{
+            //flytte rundt på eksisterende brikker
+            for (int index = 0;index<9;index++){
+                if (board.getOwner(index)==player){
+                    for (int newIndex = 0; newIndex<9;newIndex++){
+                        if(board.getOwner(newIndex)==0){
+                            legalMoves.add("move,"+index+","+newIndex);
                         }
                     }
                 }
-                break;
+            }
         }
+
         return legalMoves;
     }
 
