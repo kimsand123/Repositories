@@ -72,9 +72,11 @@ public class Game {
                 String[] splitMoveData = path.remove(path.size() - 1).split(",");
                 switch (splitMoveData[0]) {
                     case "put":
+                        System.out.println("put");
                         board.setOwner(1, Integer.parseInt(splitMoveData[2]));
                         break;
                     case "move":
+                        System.out.println("move");
                         board.movePiece(Integer.parseInt(splitMoveData[1]), Integer.parseInt(splitMoveData[2]));
                         break;
                 }

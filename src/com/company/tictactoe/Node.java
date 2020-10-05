@@ -22,7 +22,6 @@ public class Node {
             //Maximizer
             ArrayList<String> legalMoves = getLegalMoves(board, player, numberOfPlayingPieces);
             while (alpha < beta) {
-
                 if (legalMoves.isEmpty()) {
                     break;
                 } else {
@@ -30,10 +29,12 @@ public class Node {
                     String legalMove = legalMoves.remove(0);
                     Board newBoard = performMove(legalMove, board);
                     newBoard.calculateBoardValue(player);
-
                     int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
                     if (V > alpha) {
-                        path.add(legalMove);
+                        if (depth == 0){
+                            path.clear();
+                            path.add(legalMove);
+                        }
                         alpha = V;
                         numberOfPlayingPieces = numberOfPlayingPieces +1;
 
@@ -45,7 +46,6 @@ public class Node {
         //Minimizer
         ArrayList<String> legalMoves = getLegalMoves(board, player, numberOfPlayingPieces);
         while (alpha < beta) {
-
             if (legalMoves.isEmpty()) {
                 break;
             } else {
@@ -54,7 +54,6 @@ public class Node {
                 newBoard.calculateBoardValue(player);
                 int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
                 if (V<beta) {
-                    path.add(legalMove);
                     beta = V;
                     numberOfPlayingPieces = numberOfPlayingPieces +1;
                 }
@@ -89,7 +88,6 @@ public class Node {
 
     private ArrayList<String> getLegalMoves(Board board, int player, int numberOfPiecesForPlayer) {
         ArrayList<String> legalMoves = new ArrayList<>();
-        int moveIndex=0;
         if (numberOfPiecesForPlayer<6) {
             for (int index = 0; index < 9; index++) {
                 if (board.getOwner(index) == 0) {

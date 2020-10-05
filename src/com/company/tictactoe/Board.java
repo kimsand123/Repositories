@@ -112,7 +112,7 @@ public class Board {
             }
         }
         if(checkForWin(board, 2)){
-            boardValue=100+5*depth;
+            boardValue=-100+5*depth;
         }
         otherPlayerValue=boardValue;
         setStaticValue(playerValue-otherPlayerValue);
