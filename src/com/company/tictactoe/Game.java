@@ -1,7 +1,6 @@
 package com.company.tictactoe;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -17,13 +16,12 @@ public class Game {
     public void Game(int firstPlayer){
         this.firstPlayer = firstPlayer;
         startGame(firstPlayer);
-
     }
 
     private void startGame(int player) {
         while (true) {
             board.printBoard();
-            if (board.numberOfTokensOnTheBoard < 6) {
+            if (board.getNumberOfTokensFromTheBoard() < 6) {
                 if (player == humanPlayer) {
                     System.out.println("Enter x,y coordinate for putting a token on the board");
                     s = input.nextLine();
@@ -32,8 +30,6 @@ public class Game {
                     cord[1] = Integer.parseInt(cordString[1]);
                     int index = (cord[1] - 1) * 3 + cord[0] - 1;
                     board.setOwner(2, index);
-                    board.addNumberOfTokensToTheBoard();
-                    // System.out.println(board.getNumberOfTokensOnTheBoard());
                     //get Coordinates for placing piece into cord. 0=x, 1=y
                     board.printBoard();
                     player=getNewPlayer(player);
@@ -53,23 +49,23 @@ public class Game {
                     board.movePiece(fromIndex, toIndex);
                     board.printBoard();
                     player=getNewPlayer(player);
-
                 }
-
             }
 
             //AI Player
             Node rootNode=new Node();
             int alpha = -1000;
             int beta = 1000;
-            int maxDepth = 5;
+            int maxDepth = 2;
             int depth = 0;
             ArrayList<String> bestMove= new ArrayList<String>();
-            int bestMoveAmount = rootNode.alphaBetaExecute(board, alpha, beta, 1, maxDepth, depth, bestMove);
-            printPath(bestMove);
+            Board AIboard = new Board();
+            board.copyBoard(AIboard);
+            int bestMoveAmount = rootNode.alphaBetaExecute(AIboard, alpha, beta, 1, maxDepth, depth, bestMove);
+            printBestMove(bestMove);
             System.out.println("BestMove: "+bestMoveAmount);
             if (bestMove.size()!=0) {
-                String[] splitMoveData = bestMove.remove(bestMove.size() - 1).split(",");
+                String[] splitMoveData = bestMove.remove(0).split(",");
                 switch (splitMoveData[0]) {
                     case "put":
                         System.out.println("put");
@@ -80,7 +76,7 @@ public class Game {
                         board.movePiece(Integer.parseInt(splitMoveData[1]), Integer.parseInt(splitMoveData[2]));
                         break;
                 }
-                board.addNumberOfTokensToTheBoard();
+                //board.setNumberOfTokens(numberOfTokens);
                 player=getNewPlayer(player);
                 board.calculateBoardValue(0);
                 if (board.getValue(9)>100){
@@ -95,7 +91,7 @@ public class Game {
         System.exit(0);
     }
 
-    private void printPath(ArrayList<String> bestMove) {
+    private void printBestMove(ArrayList<String> bestMove) {
             String[] data = bestMove.get(0).split(",");
             System.out.println("(Command:"+data[0]+", Player:"+data[1]+", index:"+data[2]);
     }

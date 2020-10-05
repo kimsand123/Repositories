@@ -65,7 +65,7 @@ public class Main {
         System.out.println();
         System.out.println();
         Game game = new Game();
-        game.Game(1);
+        game.Game(2);
 
     }
 }
