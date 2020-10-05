@@ -1,7 +1,7 @@
 package com.company.tictactoe;
 
 public class Board {
-    int numberOfFields=12;
+    int numberOfFields=10;
     String board[] = new String[numberOfFields];
     int numberOfTokensOnTheBoard;
 
@@ -18,13 +18,6 @@ public class Board {
     public void setStaticValue(int value){
         board[9] = String.valueOf(value);
     }
-    public void setAlpha(int alpha){
-        board[10] = String.valueOf(alpha);
-    }
-    public void setBeta(int beta){
-        board[11] = String.valueOf(beta);
-    }
-
 
     public int getStaticValue(){
         return Integer.parseInt(board[9]);
@@ -90,63 +83,67 @@ public class Board {
     }
 
     public int calculateBoardValue(int depth){
-        int boardValue=0;
-        int playerValue=0;
-        int otherPlayerValue=0;
-        //check Board
-        for (int index = 0; index<9;index++){
-            if (getOwner(index)==1){
-                boardValue=boardValue+getValue(index);
-            }
-        }
-        if(checkForWin(board, 1)){
-            boardValue=100-5*depth;
-        }
-        playerValue=boardValue;
-        //Check boardvalue for otherplayer
-        boardValue=0;
-        //check Corners
-        for (int index = 0; index<9;index++){
-            if (getOwner(index)==2){
-                boardValue=boardValue+getValue(index);
-            }
-        }
-        if(checkForWin(board, 2)){
-            boardValue=-100+5*depth;
-        }
-        otherPlayerValue=boardValue;
-        setStaticValue(playerValue-otherPlayerValue);
+        int player1BoardValue = getPlayerBoardValue(board,1,depth);
+        int player2BoardValue = getPlayerBoardValue(board,2,depth);
+        setStaticValue(player1BoardValue-player2BoardValue);
         return getStaticValue();
     }
 
-    private int getOtherPlayer(int player){
-        if (player == 1){
-            return 2;
+    private int getPlayerBoardValue(String[] board, int player, int depth) {
+        //Vandrette calc
+        int exponent = 1;
+        int boardValue = 0;
+        for (int x=0;x<3;x++){
+            for (int y=0;y<3;y++) {
+                if (Integer.parseInt(board[y * 3+x]) == player) {
+                    boardValue = boardValue + (int) Math.pow(getValue(y * 3+x), exponent);
+                    exponent++;
+                    exponent++;
+                }else {
+                    //reset eksponenten da striben i så fald er brudt.
+                    exponent=1;
+                }
+            }
         }
-        return 1;
-    }
+        exponent=1;
+        //Lodret calc
+        for (int y = 0; y<3;y++) {
+            for (int x = 0; x < 3; x++) {
+                if (Integer.parseInt(board[ 0 + x+(y*3)])==player)  {
+                    boardValue = boardValue + (int)Math.pow(getValue(0 + x+(y*3)),exponent);
+                    exponent++;
+                    exponent++;
+                }else {
+                    exponent=1;
+                }
+            }
+        }
 
-    private boolean checkForWin(String[] board, int player) {
-        //Vandrette wins
-        for (int y=0;y<3;y++) {
-            if (Integer.parseInt(board[0 + y * 3]) == player && Integer.parseInt(board[1 + y * 3]) == player && Integer.parseInt(board[2 + y * 3]) == player) {
-                return true;
+        //Skrå calculation
+        int step= 0;
+        exponent=1;
+        for (int taller = 0;taller<3;taller++){
+            if (Integer.parseInt(board[step])==player){
+                boardValue = boardValue + (int)Math.pow(getValue(step),exponent);
+                exponent++;
+                exponent++;
+
             }
+            step=step+4;
         }
-        //Lodrette wins
-        for (int x= 0;x<3;x++) {
-            if (Integer.parseInt(board[0+x]) == player && Integer.parseInt(board[3+x]) == player && Integer.parseInt(board[6+x]) == player) {
-                return true;
+
+        step = 2;
+        exponent=1;
+        for(int taller=0;taller<3;taller++){
+            if(Integer.parseInt(board[step])==player){
+                boardValue = boardValue + (int)Math.pow(getValue(step),exponent);
+                exponent++;
+                exponent++;
             }
+
+            step=step+2;
         }
-        //Skrå wins
-        if (Integer.parseInt(board[0])==player && Integer.parseInt(board[4])==player && Integer.parseInt(board[8])==player){
-            return true;
-        }
-        if (Integer.parseInt(board[2])==player && Integer.parseInt(board[4])==player && Integer.parseInt(board[6])==player){
-            return true;
-        }
-        return false;
+        return boardValue-depth*5;
     }
 
     public void recordAIMove(Board board){
@@ -164,7 +161,7 @@ public class Board {
     }
 
     public String[] getBoardData() {
-        String[] boardData = new String[12];
+        String[] boardData = new String[10];
         for (int taller = 0; taller<9;taller++){
             boardData[taller] = board[taller];
         }

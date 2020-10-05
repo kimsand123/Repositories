@@ -7,7 +7,7 @@ public class Node {
     public Node() {
     }
 
-    public int alphaBetaExecute(Board board, int incomingAlpha, int incomingBeta, int player, int maxDepth, int depth, ArrayList<String> path) {
+    public int alphaBetaExecute(Board board, int incomingAlpha, int incomingBeta, int player, int maxDepth, int depth, ArrayList<String> bestMove) {
         int alpha = incomingAlpha;
         int beta = incomingBeta;
         int numberOfPlayingPieces=board.getNumberOfTokensFromTheBoard();
@@ -29,11 +29,11 @@ public class Node {
                     String legalMove = legalMoves.remove(0);
                     Board newBoard = performMove(legalMove, board);
                     newBoard.calculateBoardValue(player);
-                    int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
+                    int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, bestMove);
                     if (V > alpha) {
                         if (depth == 0){
-                            path.clear();
-                            path.add(legalMove);
+                            bestMove.clear();
+                            bestMove.add(legalMove);
                         }
                         alpha = V;
                         numberOfPlayingPieces = numberOfPlayingPieces +1;
@@ -52,8 +52,11 @@ public class Node {
                 String legalMove = legalMoves.remove(0);
                 Board newBoard = performMove(legalMove, board);
                 newBoard.calculateBoardValue(player);
-                int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, path);
+                int V = alphaBetaExecute(newBoard, alpha, beta, getNewPlayer(player), maxDepth, depth + 1, bestMove);
                 if (V<beta) {
+                    if (depth==0){
+                        bestMove.add(legalMove);
+                    }
                     beta = V;
                     numberOfPlayingPieces = numberOfPlayingPieces +1;
                 }

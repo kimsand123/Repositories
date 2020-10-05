@@ -1,6 +1,7 @@
 package com.company.tictactoe;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -61,15 +62,14 @@ public class Game {
             Node rootNode=new Node();
             int alpha = -1000;
             int beta = 1000;
-            int maxDepth = 3;
+            int maxDepth = 5;
             int depth = 0;
-            ArrayList<String> path = new ArrayList<>();
-
-            int bestMoveAmount = rootNode.alphaBetaExecute(board, alpha, beta, 1, maxDepth, depth, path);
-            printPath(path);
+            ArrayList<String> bestMove= new ArrayList<String>();
+            int bestMoveAmount = rootNode.alphaBetaExecute(board, alpha, beta, 1, maxDepth, depth, bestMove);
+            printPath(bestMove);
             System.out.println("BestMove: "+bestMoveAmount);
-            if (path.size()!=0) {
-                String[] splitMoveData = path.remove(path.size() - 1).split(",");
+            if (bestMove.size()!=0) {
+                String[] splitMoveData = bestMove.remove(bestMove.size() - 1).split(",");
                 switch (splitMoveData[0]) {
                     case "put":
                         System.out.println("put");
@@ -82,15 +82,22 @@ public class Game {
                 }
                 board.addNumberOfTokensToTheBoard();
                 player=getNewPlayer(player);
+                board.calculateBoardValue(0);
+                if (board.getValue(9)>100){
+                    gameIsWon(player);
+                }
             }
         }
     }
 
-    private void printPath(ArrayList<String> path) {
-        for(String i : path){
-            String[] data = i.split(",");
+    private void gameIsWon(int player) {
+        System.out.println("Spiller "+ player + " vandt spillet");
+        System.exit(0);
+    }
+
+    private void printPath(ArrayList<String> bestMove) {
+            String[] data = bestMove.get(0).split(",");
             System.out.println("(Command:"+data[0]+", Player:"+data[1]+", index:"+data[2]);
-        }
     }
 
     private int getNewPlayer(int player){
