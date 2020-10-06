@@ -1,11 +1,17 @@
 package com.company.tictactoe;
 
+import java.io.IOException;
+import         java.io.*;
+
 public class Board {
     int numberOfFields=10;
     String board[] = new String[numberOfFields];
+    Console cnsl = null;
     public Board() {
         initBoard();
     }
+
+
 
     private void initBoard() {
         for (int taller = 0;taller<numberOfFields;taller++) {
@@ -52,6 +58,7 @@ public class Board {
     public void printBoard(){
         System.out.println("Start TicTacToe");
         StringBuilder boardString = new StringBuilder();
+
 
         for(int index = 0; index<9;index++){
 
@@ -157,6 +164,10 @@ public class Board {
         for (int taller = 0; taller<9;taller++){
             board[taller] = boardData[taller];
         }
+    }
+
+    public void recieveConsole(Console cnsl){
+        this.cnsl = cnsl;
     }
 
 }

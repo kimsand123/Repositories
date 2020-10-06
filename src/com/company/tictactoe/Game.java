@@ -1,5 +1,6 @@
 package com.company.tictactoe;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,6 +12,7 @@ public class Game {
     Scanner input = new Scanner(System.in);
     String s;
     String[] cordString;
+
 
 
     public void Game(int firstPlayer){
@@ -61,9 +63,9 @@ public class Game {
             ArrayList<String> bestMove= new ArrayList<String>();
             Board AIboard = new Board();
             board.copyBoard(AIboard);
-            int bestMoveAmount = rootNode.alphaBetaExecute(AIboard, alpha, beta, 1, maxDepth, depth, bestMove);
-            printBestMove(bestMove);
-            System.out.println("BestMove: "+bestMoveAmount);
+            rootNode.alphaBetaExecute(AIboard, alpha, beta, 1, maxDepth, depth, bestMove);
+            /*printBestMove(bestMove);
+            System.out.println("BestMove: "+bestMoveAmount);*/
             if (bestMove.size()!=0) {
                 String[] splitMoveData = bestMove.remove(0).split(",");
                 switch (splitMoveData[0]) {
@@ -79,21 +81,22 @@ public class Game {
                 //board.setNumberOfTokens(numberOfTokens);
                 player=getNewPlayer(player);
                 board.calculateBoardValue(0);
-                if (board.getValue(9)>100){
-                    gameIsWon(player);
-                }
+            }
+            if (board.getStaticValue()>100){
+                gameIsWon(player);
             }
         }
     }
 
     private void gameIsWon(int player) {
+        board.printBoard();
         System.out.println("Spiller "+ player + " vandt spillet");
         System.exit(0);
     }
 
     private void printBestMove(ArrayList<String> bestMove) {
-            String[] data = bestMove.get(0).split(",");
-            System.out.println("(Command:"+data[0]+", Player:"+data[1]+", index:"+data[2]);
+        String[] data = bestMove.get(0).split(",");
+        System.out.println("(Command:"+data[0]+", Player:"+data[1]+", index:"+data[2]);
     }
 
     private int getNewPlayer(int player){
