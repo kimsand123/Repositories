@@ -116,12 +116,4 @@ public class Node {
 
         return legalMoves;
     }
-
-    private Board copyBoard(Board board){
-        Board boardCopy = new Board();
-        for (int taller = 0;taller<9;taller++){
-            boardCopy.setOwner(taller, board.getOwner(taller));
-        }
-        return boardCopy;
-    }
 }
